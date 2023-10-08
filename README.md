@@ -79,7 +79,3 @@ Peruse this for insight.
 ## License
 
 3-Clause BSD License
-
-## Author Information
-
-Matthew Dowell <mbd06b@gmail.com>
