@@ -42,6 +42,8 @@ spec:
               value: taiga
             - name: RABBITMQ_USER
               value: taiga
+            - name: RABBITMQ_HOST
+              value: {{ template "taiga.fullname" . }}-events-rabbitmq
             - name: TAIGA_SECRET_KEY
               value: taiga-back-secret-key
           {{- with .Values.taigaEvents.resources }}
