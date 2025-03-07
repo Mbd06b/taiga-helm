@@ -15,3 +15,21 @@ spec:
   selector:
     {{- include "taiga.selectorLabels" . | nindent 4 }}
     app.kubernetes.io/component: taiga-async-rabbitmq
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: taiga-async-rabbitmq
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "taiga.labels" . | nindent 4 }}
+    app.kubernetes.io/component: taiga-async-rabbitmq-alias
+spec:
+  ports:
+    - name: amqp
+      targetPort: amqp
+      port: {{ .Values.taigaAsyncRabbitmq.service.port }}
+      protocol: TCP
+  selector:
+    {{- include "taiga.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: taiga-async-rabbitmq
