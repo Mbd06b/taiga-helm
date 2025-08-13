@@ -4,11 +4,14 @@ metadata:
 components:
   - name: tools
     container:
-      image: quay.io/devfile/universal-developer-image:ubi8-latest
+      image: harbor.ethosengine.com/devspaces/udi-plus:ubi9-plus-latest
       memoryLimit: 3Gi
+      mountSources: true
       env:
         - name: HELM_EXPERIMENTAL_OCI
           value: "1"
+        - name: CLAUDE_CONFIG_DIR
+          value: /tmp/claude-config
 
 commands:
   - id: run-main-script
