@@ -30,6 +30,22 @@ spec:
       securityContext:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      initContainers:
+        - name: fix-permissions
+          image: busybox:1.35
+          command: ['sh', '-c']
+          args:
+            - |
+              echo "Setting RabbitMQ events data directory permissions..."
+              chown -R 100:101 /data
+              chmod 755 /data
+              rm -f /data/.erlang.cookie
+              echo "RabbitMQ events permissions set successfully"
+          volumeMounts:
+            - name: taiga-events-rabbitmq-data
+              mountPath: /data
+          securityContext:
+            runAsUser: 0
       containers:
         - name: taiga-events-rabbitmq
           {{- with .Values.taigaEventsRabbitmq.securityContext }}

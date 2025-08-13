@@ -28,6 +28,22 @@ spec:
       {{- end }}
       securityContext:
         {{- toYaml .Values.taigaAsyncRabbitmq.podSecurityContext | nindent 8 }}
+      initContainers:
+        - name: fix-permissions
+          image: busybox:1.35
+          command: ['sh', '-c']
+          args:
+            - |
+              echo "Setting RabbitMQ async data directory permissions..."
+              chown -R 100:101 /data
+              chmod 755 /data
+              rm -f /data/.erlang.cookie
+              echo "RabbitMQ async permissions set successfully"
+          volumeMounts:
+            - name: taiga-async-rabbitmq-data
+              mountPath: /data
+          securityContext:
+            runAsUser: 0
       containers:
         - name: taiga-async-rabbitmq
           securityContext:

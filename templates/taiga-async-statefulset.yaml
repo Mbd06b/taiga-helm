@@ -28,6 +28,29 @@ spec:
       {{- end }}
       securityContext:
         {{- toYaml .Values.taigaAsync.podSecurityContext | nindent 8 }}
+      initContainers:
+        - name: wait-for-db
+          image: busybox:1.35
+          command: ['sh', '-c']
+          args:
+            - |
+              echo "Waiting for PostgreSQL..."
+              until nc -z {{ template "taiga.fullname" . }}-db {{ .Values.taigaDB.service.port }}; do
+                sleep 2
+                echo "Retrying..."
+              done
+              echo "PostgreSQL is ready!"
+        - name: wait-for-async-rabbitmq
+          image: busybox:1.35
+          command: ['sh', '-c']
+          args:
+            - |
+              echo "Waiting for Async RabbitMQ..."
+              until nc -z {{ template "taiga.fullname" . }}-async-rabbitmq {{ .Values.taigaAsyncRabbitmq.service.port }}; do
+                sleep 2
+                echo "Retrying..."
+              done
+              echo "Async RabbitMQ is ready!"
       containers:
         - name: taiga-async
           securityContext:

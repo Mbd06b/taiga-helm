@@ -28,6 +28,21 @@ spec:
       {{- end }}
       securityContext:
         {{- toYaml .Values.taigaDB.podSecurityContext | nindent 8 }}
+      initContainers:
+        - name: fix-permissions
+          image: busybox:1.35
+          command: ['sh', '-c']
+          args:
+            - |
+              echo "Setting PostgreSQL data directory permissions..."
+              chown -R 999:999 /data
+              chmod 755 /data
+              echo "PostgreSQL permissions set successfully"
+          volumeMounts:
+            - name: taiga-db-data
+              mountPath: /data
+          securityContext:
+            runAsUser: 0
       containers:
         - name: taiga-db
           securityContext:
